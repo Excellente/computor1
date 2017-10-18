@@ -1,25 +1,27 @@
 #ifndef COMPV1_H
 #define COMPV1_H
 
-#include <string>
-#include <iostream>
-#include <vector>
-
-using namespace std;
+#include "term.hpp"
+#include "common.hpp"
 
 class Computor{
-    
+
     private:
-        string rhs;
-        string lhs;
+        string _rhs;
+        string _lhs;
+        string _exp;
+        string _reduced;
+        vector<Term> trm;
 
     public:
-        Computor();
         ~Computor();
         void tostring();
-        void solvepoly(string poly);
-        size_t count_terms(string poly);
-        vector<string> strsplit(string str, string del);
+        void solvepoly();
+        void transpose();
+        Computor(string exp);
+        void getTerm(string p);
+        size_t count_terms(string exp);
+        vector<string> strsplit(string del);
         Computor& operator=(const Computor &rhs);
     };
 

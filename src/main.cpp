@@ -2,11 +2,13 @@
 
 int main(int argc, char *argv[])
 {
-    vector<string> str;    
+    vector<string> str;
+    Computor pcalc = Computor((string)argv[1]);
+
     if (argc == 2)
     {
-        // str = strsplit(argv[1], "=");
-        cout << "lhs = " << str[0] << "\nrhs = " << str[1] << endl;
+        pcalc.tostring();
+        pcalc.getTerm("");
     }
     else
         cout << "exception not handled" << endl;

@@ -1,7 +1,7 @@
 CC		= clang++
 EXE		= computor
 INC 	= ./include/
-SRC 	= main.cpp computor.cpp
+SRC 	= main.cpp computor.cpp term.cpp
 SRCDIR 	= ./src/
 SRCS 	= $(addprefix $(SRCDIR), $(SRC))
 
