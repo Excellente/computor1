@@ -29,34 +29,27 @@ void Computor::solvepoly()
 {
 }
 
-// void Computer::groupLikeTerms()
-// {
-    
-// }
-
 void Computor::assign_term(string p, Term *t)
 {
     string::size_type sz;
 
-    t->setCoefficient(stof(p, &sz));
+    //t->setCoefficient(stof(p, &sz));
     sz = p.find("^") + 1;
-    t->setExponent(stof(p.substr(sz, 4), &sz));
+    //t->setExponent(stof(p.substr(sz, 4), &sz));
     sz = p.find("^") - 1;
     t->setBase(p.substr(sz, 2)[0]);
 }
 
 void Computor::getTerm(string p, string &t)
 {
-    static int last = 0;
-    static int first = 0;
+    static int last;
+    static int first;
 
-    while (1 && p[last] != '\0')
-    {
+    while ((p[last] != '+' || p[last] == '-') && p[last] != '\0')
         last++;
-    }
     t = p.substr(first, last - first);
-    cout << last << endl;
-    first = last;
+    cout << t << endl;
+    first = last + 1;
 }
 
 void Computor::groupLikeTerms(string p)

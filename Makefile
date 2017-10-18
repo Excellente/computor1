@@ -1,4 +1,4 @@
-CC		= clang++
+CC		= g++
 EXE		= computor
 INC 	= ./include/
 SRC 	= main.cpp computor.cpp term.cpp
