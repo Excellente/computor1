@@ -19,9 +19,10 @@ class Computor{
         void solvepoly();
         void transpose();
         Computor(string exp);
-        void getTerm(string p);
+        void groupLikeTerms(string p);        
+        void getTerm(string p, string &t);
         size_t count_terms(string exp);
-        void assign_term(string p, Term t);
+        void assign_term(string p, Term *t);
         vector<string> strsplit(string del);
         Computor& operator=(const Computor &rhs);
     };

@@ -34,33 +34,50 @@ void Computor::solvepoly()
     
 // }
 
-void Computor::assign_term(string p, Term t)
+void Computor::assign_term(string p, Term *t)
 {
     string::size_type sz;
 
-    t.setCoefficient(stof(p, &sz));
+    t->setCoefficient(stof(p, &sz));
     sz = p.find("^") + 1;
-    t.setExponent(stof(p.substr(sz, 4), &sz));
+    t->setExponent(stof(p.substr(sz, 4), &sz));
     sz = p.find("^") - 1;
-    t.setBase(p.substr(sz, 2)[0]);
+    t->setBase(p.substr(sz, 2)[0]);
 }
 
-void Computor::getTerm(string p)
+void Computor::getTerm(string p, string &t)
 {
+    static int last = 0;
+    static int first = 0;
+
+    while (1 && p[last] != '\0')
+    {
+        last++;
+    }
+    t = p.substr(first, last - first);
+    cout << last << endl;
+    first = last;
+}
+
+void Computor::groupLikeTerms(string p)
+{
+    size_t i;
+    size_t j;
     string tmp;
     Term t = Term();
 
-    for (int i = 0; i < _exp.length(); i++)
-    {
-        if (_exp[i] == '+')
-        {
-            tmp = _exp.substr(0, i - 1);
-            break;
-        }
-    }
-    assign_term(_exp, t);
-    cout << "\nterm1 = " << tmp << endl << "coeff = " << t.getCoefficient()
-    << "\nexpo = " << t.getExponent() << "\nbase = " << t.getBase() << endl;
+    // for (int i = 0; i < _exp.length(); i++)
+    // {
+        i = _exp.find("+", i + 1);
+        j = _exp.find("-", j + 1);
+        getTerm(_exp, tmp);
+    //     if (_exp[i] == '+')
+    //     {
+    //         tmp = _exp.substr(0, i - 1);
+    //         break;
+    //     }
+    // }
+    // assign_term(_exp, &t);
 }
 
 size_t Computor::count_terms(string exp)
