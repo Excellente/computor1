@@ -34,10 +34,21 @@ void Computor::solvepoly()
     
 // }
 
+void Computor::assign_term(string p, Term t)
+{
+    string::size_type sz;
+
+    t.setCoefficient(stof(p, &sz));
+    sz = p.find("^") + 1;
+    t.setExponent(stof(p.substr(sz, 4), &sz));
+    sz = p.find("^") - 1;
+    t.setBase(p.substr(sz, 2)[0]);
+}
+
 void Computor::getTerm(string p)
 {
     string tmp;
-    Term *t = new Term();
+    Term t = Term();
 
     for (int i = 0; i < _exp.length(); i++)
     {
@@ -47,8 +58,9 @@ void Computor::getTerm(string p)
             break;
         }
     }
-    cout << "term1 = " << tmp << endl;
-    delete t;
+    assign_term(_exp, t);
+    cout << "\nterm1 = " << tmp << endl << "coeff = " << t.getCoefficient()
+    << "\nexpo = " << t.getExponent() << "\nbase = " << t.getBase() << endl;
 }
 
 size_t Computor::count_terms(string exp)

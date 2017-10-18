@@ -9,6 +9,36 @@ float Term::abs(float x)
     return (x);
 }
 
+float Term::getCoefficient()
+{
+    return (_coeff);
+}
+
+float Term::getExponent()
+{
+    return (_exponent);
+}
+
+char Term::getBase()
+{
+    return (_base);
+}
+
+void Term::setBase(char s)
+{
+    _base = s;
+}
+
+void Term::setExponent(float e)
+{
+    _exponent = e;
+}
+
+void Term::setCoefficient(float f)
+{
+    _coeff = f;
+}
+
 Term::Term()
 {
     _flag = 0;

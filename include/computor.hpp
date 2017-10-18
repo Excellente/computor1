@@ -21,6 +21,7 @@ class Computor{
         Computor(string exp);
         void getTerm(string p);
         size_t count_terms(string exp);
+        void assign_term(string p, Term t);
         vector<string> strsplit(string del);
         Computor& operator=(const Computor &rhs);
     };
