@@ -40,22 +40,17 @@ void Computor::assign_term(string p, Term *t)
     t->setBase(p.substr(sz, 2)[0]);
 }
 
-void Computor::getTerm(string p, string &t)
+void Computor::getTerm(string p, string &t, int last, int first)
 {
-    static int last;
-    static int first;
-
-    int test = 0;
-    while (p[last] != '\0' && test < 2)
-    {
-        while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
-            last++;
-        t = p.substr(first, last - first);
-        if (test == 1)
-        cout << t << endl;
-        first = last + 1;
-        test += 1;
-    }
+    static int test = 0;    
+    while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
+        last++;
+    t = p.substr(first, last - first);
+    last++;
+    if (test == 2)
+    cout << t << endl << last << endl;
+    first = last;
+    test += 1;
 }
 
 void Computor::groupLikeTerms(string p)
@@ -64,18 +59,14 @@ void Computor::groupLikeTerms(string p)
     size_t j;
     string tmp;
     Term t = Term();
-
-    // for (int i = 0; i < _exp.length(); i++)
-    // {
-        i = _exp.find("+", i + 1);
-        j = _exp.find("-", j + 1);
-        getTerm(_exp, tmp);
-    //     if (_exp[i] == '+')
-    //     {
-    //         tmp = _exp.substr(0, i - 1);
-    //         break;
-    //     }
-    // }
+    static int last;
+    static int first;
+    int test = 0;
+    while (p[last] != '\0' && test < 3)
+    {
+        getTerm(_exp, tmp, last, first);
+        test++;
+    }
     // assign_term(_exp, &t);
 }
 

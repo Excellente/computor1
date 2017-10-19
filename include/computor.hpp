@@ -20,11 +20,11 @@ class Computor{
         void transpose();
         Computor(string exp);
         void groupLikeTerms(string p);        
-        void getTerm(string p, string &t);
         size_t count_terms(string exp);
         void assign_term(string p, Term *t);
         vector<string> strsplit(string del);
         Computor& operator=(const Computor &rhs);
+        void getTerm(string p, string &t, int l, int f);
     };
 
 #endif
