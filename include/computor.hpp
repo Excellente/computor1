@@ -21,8 +21,8 @@ class Computor{
         size_t count_terms();
         vector<string> strsplit(string d);
         Computor& operator=(const Computor &r);
-        vector<Term>::iterator nextLikeTerm(int j, int l);
         
+        void printTerms();
         void simplify();        
         void tostring();
         void solvepoly();

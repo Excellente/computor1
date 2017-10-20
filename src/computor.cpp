@@ -36,7 +36,7 @@ void Computor::tostring()
 
 void Computor::solvepoly()
 {
-    transpose();
+    transpose();    
     if (_h_power > 2)
         cout << "The polynomial is of order > 2";
     else
@@ -94,45 +94,46 @@ void Computor::getTerm(string p, string &t, int &last, int &first)
     first = last;
 }
 
-vector<Term>::iterator Computor::nextLikeTerm(int j, int len)
+void Computor::printTerms()
 {
-    vector<Term>::iterator evi = _exp_terms.end();
-    vector<Term>::iterator bvi = _exp_terms.begin();
+    int len = count_terms();
 
-    for (int i = j; i < len; i++)
+    for (int j = 0; j < len; j++)
     {
-        // cout << endl << "goes here " << i;
-        if (i != 0 && (bvi->getExponent() == (bvi + i)->getExponent()))
-        {
-            bvi = (bvi + i);
-        }
+        _exp_terms[j].toString();
+        cout << " ";
     }
-    return (bvi);
+    cout << endl;
 }
 
 void Computor::addLikeTerms()
 {
     int len = count_terms();
+    vector<Term>::iterator tmp;
     vector<Term>::iterator evi = _exp_terms.end();
     vector<Term>::iterator bvi = _exp_terms.begin();
 
-    for (int j = 0; j < len; j++)
+    // printTerms();
+    for (int i = 0; i < len; i++)
     {
-        // bvi->toString(); cout << " ";
-        for (int i = j; i < len; i++)
+        tmp = bvi + 1;
+        cout << "start iteration" << endl;
+        for (int j = i; j < len; j++)
         {
-            // cout << endl << "goes here " << i;
-            if (i != 0 && (bvi->getExponent() == (bvi + i)->getExponent()))
+            tmp->toString();cout << " <-> expo =" << tmp->getExponent() << endl<< endl;
+            if (tmp != bvi && (bvi->getExponent() == tmp->getExponent()))
             {
-                *bvi += *(bvi + i);
-                if (i < len - 1)
-                    _exp_terms.erase(bvi + i);
-                (bvi + i)->toString();
+                cout << "hit: "; tmp->toString();cout << endl<< endl;
+                len = count_terms();
+                *bvi = *bvi + *tmp;
+                _exp_terms.erase(tmp);
             }
+            tmp++;
         }
-        cout  << endl;
+        cout << "end iteration" << endl;
         bvi++;
     }
+    // printTerms();
 }
 
 void Computor::_sign(string _e, int last, int &sign)
