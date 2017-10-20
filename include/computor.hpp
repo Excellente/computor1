@@ -16,21 +16,22 @@ class Computor{
 
     public:
         ~Computor();
-        Computor(string exp);
+        Computor(string e);
 
-        size_t get_termslen();
-        size_t count_terms(string exp);
-        vector<string> strsplit(string del);
-        Computor& operator=(const Computor &rhs);
-
+        size_t count_terms();
+        vector<string> strsplit(string d);
+        Computor& operator=(const Computor &r);
+        vector<Term>::iterator nextLikeTerm(int j, int l);
+        
+        void simplify();        
         void tostring();
         void solvepoly();
         void transpose();
-        void _sign(string _e, int last, int &sign);
+        void _sign(string e, int l, int &s);
         void assign_term(string p, Term *t);
         void addLikeTerms();
-        void getTerm(string p, string &t, int &l, int &f, int &s);
-        void stringToTerm(vector<Term> &v, string _e, int &sign, int f);
+        void getTerm(string p, string &t, int &l, int &f);
+        void stringToTerm(string e, int &s, int f);
     };
 
 #endif

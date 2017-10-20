@@ -22,50 +22,52 @@ Computor &Computor::operator=(const Computor &rhs)
 
 void Computor::tostring()
 {
+    int len = count_terms();
+
     cout << "lhs = " << _lhs << "\nrhs = " << _rhs <<
-    "\nreduced form = " << _reduced << endl;
+    "\nreduced form = " << _reduced << endl << endl;
+    for (int i = 0; i < len; i++)
+    {
+        _exp_terms[i].toString();
+        cout << " ";
+    }
+    cout << endl;
 }
 
 void Computor::solvepoly()
 {
-    // if (_h_power > 2)
     transpose();
-    addLikeTerms();
-    cout << endl;
-    cout << "*********** debugging ***************" << endl;
-    for (int j = 0; j < 5; j++)
-    {
-        _exp_terms[j].toString();
-        cout << " ";
-    }
-    cout << "\n*********** debugging ***************" << endl;    
+    if (_h_power > 2)
+        cout << "The polynomial is of order > 2";
+    else
+        addLikeTerms();
 }
 
 void Computor::transpose()
 {
     int sign = 0;
 
-    stringToTerm(_exp_terms, _lhs, sign, 0);
-    stringToTerm(_exp_terms, _rhs, sign, 1);
+    stringToTerm(_lhs, sign, 0);
+    stringToTerm(_rhs, sign, 1);
 }
 
-void Computor::addLikeTerms()
+void Computor::stringToTerm(string _e, int &sign, int f)
 {
-    int len = get_termslen();
-    float zexp = _exp_terms[0].getExponent();
+    Term *t;
+    int last;
+    int first;
+    string tmp;
     
-    for (int i = 0; i < len; i++)
+    last = first = 0;
+    while (_e[last] != '\0')
     {
-        for (int j = i; j < len; j++)
-        {
-            if (j != 0 && (zexp == _exp_terms[j].getExponent()))
-            {
-                _exp_terms[j].toString();
-                //cout << _exp_terms[0].getExponent() << " = " << _exp_terms[j].getExponent() << endl;
-                _exp_terms[0] += _exp_terms[j];
-                cout << endl << "i = " << i << " | j = " << j << endl;
-            }
-        }
+        _sign(_e, last, sign);
+        if (f)
+            sign = ~sign;
+        t = new Term(sign);
+        getTerm(_e, tmp, last, first);
+        assign_term(tmp, t);
+        _exp_terms.push_back(*t);
     }
 }
 
@@ -82,14 +84,55 @@ void Computor::assign_term(string p, Term *t)
     t->setBase(p.substr(sz, 2)[0]);
 }
 
-void Computor::getTerm(string p, string &t, int &last, int &first, int &test)
+void Computor::getTerm(string p, string &t, int &last, int &first)
 {
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
         last++;
     t = p.substr(first, last - first);
-    last++;
+    if (p[last] != '\0')
+        last++;
     first = last;
-    test += 1;
+}
+
+vector<Term>::iterator Computor::nextLikeTerm(int j, int len)
+{
+    vector<Term>::iterator evi = _exp_terms.end();
+    vector<Term>::iterator bvi = _exp_terms.begin();
+
+    for (int i = j; i < len; i++)
+    {
+        // cout << endl << "goes here " << i;
+        if (i != 0 && (bvi->getExponent() == (bvi + i)->getExponent()))
+        {
+            bvi = (bvi + i);
+        }
+    }
+    return (bvi);
+}
+
+void Computor::addLikeTerms()
+{
+    int len = count_terms();
+    vector<Term>::iterator evi = _exp_terms.end();
+    vector<Term>::iterator bvi = _exp_terms.begin();
+
+    for (int j = 0; j < len; j++)
+    {
+        // bvi->toString(); cout << " ";
+        for (int i = j; i < len; i++)
+        {
+            // cout << endl << "goes here " << i;
+            if (i != 0 && (bvi->getExponent() == (bvi + i)->getExponent()))
+            {
+                *bvi += *(bvi + i);
+                if (i < len - 1)
+                    _exp_terms.erase(bvi + i);
+                (bvi + i)->toString();
+            }
+        }
+        cout  << endl;
+        bvi++;
+    }
 }
 
 void Computor::_sign(string _e, int last, int &sign)
@@ -103,48 +146,19 @@ void Computor::_sign(string _e, int last, int &sign)
     }
 }
 
-void Computor::stringToTerm(vector<Term> &v, string _e, int &sign, int f)
+size_t Computor::count_terms()
 {
-    Term *t;
-    int last;
-    int first;
-    string tmp;
-    int test = 0;
-    
-    last = first = 0;
-    while (_e[last] != '\0')
-    {
-        _sign(_e, last, sign);
-        if (f)
-            sign = ~sign;
-        t = new Term(sign);
-        getTerm(_e, tmp, last, first, test);
-        assign_term(tmp, t);
-        v.push_back(*t);
-    }
-}
-
-size_t Computor::get_termslen()
-{
-    return (count_terms(_lhs) + count_terms(_rhs));
-}
-
-size_t Computor::count_terms(string exp)
-{
-    int len;
     size_t terms;
-    
+    vector<Term>::iterator evi = _exp_terms.end();
+    vector<Term>::iterator bvi = _exp_terms.begin();
+
     terms = 0;
-    for (int i  = 0, j = i; i != string::npos;)
+    while (bvi != evi)
     {
-        i = exp.find("+", i + 1);
-        j = exp.find("-", j + 1);
-        if (i != string::npos)
-            terms++;
-        if (j >= string::npos)
-            terms++;
+        bvi++;
+        terms++;
     }
-    return (++terms);
+    return (terms);
 }
 
 vector<string> Computor::strsplit(string del)

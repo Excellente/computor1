@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
 
     if (argc == 2)
     {
-        pcalc.tostring();
         pcalc.solvepoly();
+        // pcalc.tostring();
     }
     else
         cout << "exception not handled" << endl;
