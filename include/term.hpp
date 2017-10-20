@@ -29,6 +29,7 @@ class Term{
 
         Term &operator+(const Term &rhs);
         Term &operator=(const Term &rhs);
+        void operator+=(const Term &rhs);
 };
 
 #endif

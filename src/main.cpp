@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     if (argc == 2)
     {
         pcalc.tostring();
-        pcalc.groupLikeTerms("");
+        pcalc.solvepoly();
     }
     else
         cout << "exception not handled" << endl;

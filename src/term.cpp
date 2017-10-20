@@ -77,6 +77,12 @@ Term &Term::operator=(const Term &rhs)
     return (*this);
 }
 
+void Term::operator+=(const Term &rhs)
+{
+    *this = *this + rhs;
+}
+
+
 Term &Term::operator+(const Term &rhs)
 {
     if (_sign == rhs._sign)
@@ -87,7 +93,7 @@ Term &Term::operator+(const Term &rhs)
     }
     else
     {
-        _coeff -= rhs._sign;
+        _coeff -= rhs._coeff;
         if (_coeff < 0)
         {
             _coeff = abs(_coeff);

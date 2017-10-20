@@ -7,6 +7,7 @@ Computor::Computor(string exp) : _exp(exp){
     _reduced = "";
     _lhs = ret[0];
     _rhs = ret[1];
+    _h_power = 0;
 }
 
 Computor::~Computor(){
@@ -27,6 +28,45 @@ void Computor::tostring()
 
 void Computor::solvepoly()
 {
+    // if (_h_power > 2)
+    transpose();
+    addLikeTerms();
+    cout << endl;
+    cout << "*********** debugging ***************" << endl;
+    for (int j = 0; j < 5; j++)
+    {
+        _exp_terms[j].toString();
+        cout << " ";
+    }
+    cout << "\n*********** debugging ***************" << endl;    
+}
+
+void Computor::transpose()
+{
+    int sign = 0;
+
+    stringToTerm(_exp_terms, _lhs, sign, 0);
+    stringToTerm(_exp_terms, _rhs, sign, 1);
+}
+
+void Computor::addLikeTerms()
+{
+    int len = get_termslen();
+    float zexp = _exp_terms[0].getExponent();
+    
+    for (int i = 0; i < len; i++)
+    {
+        for (int j = i; j < len; j++)
+        {
+            if (j != 0 && (zexp == _exp_terms[j].getExponent()))
+            {
+                _exp_terms[j].toString();
+                //cout << _exp_terms[0].getExponent() << " = " << _exp_terms[j].getExponent() << endl;
+                _exp_terms[0] += _exp_terms[j];
+                cout << endl << "i = " << i << " | j = " << j << endl;
+            }
+        }
+    }
 }
 
 void Computor::assign_term(string p, Term *t)
@@ -37,6 +77,8 @@ void Computor::assign_term(string p, Term *t)
     sz = p.find("^") + 1;
     t->setExponent(stof(p.substr(sz, 4), &sz));
     sz = p.find("^") - 1;
+    if (_h_power < t->getExponent())
+        _h_power = t->getExponent();
     t->setBase(p.substr(sz, 2)[0]);
 }
 
@@ -50,37 +92,41 @@ void Computor::getTerm(string p, string &t, int &last, int &first, int &test)
     test += 1;
 }
 
-void Computor::_sign(int last, int &sign)
+void Computor::_sign(string _e, int last, int &sign)
 {
     if (last > 0)
     {
-        if (_lhs[last - 1] == '+')
+        if (_e[last - 1] == '+')
             sign = 0;
-        else if (_lhs[last - 1] == '-')
+        else if (_e[last - 1] == '-')
             sign = 1;
     }
 }
 
-void Computor::groupLikeTerms(string p)
+void Computor::stringToTerm(vector<Term> &v, string _e, int &sign, int f)
 {
     Term *t;
-    string tmp;
-    vector<Term> exp_terms;
-    
-    int sign = 0;
-    int test = 0;
     int last;
     int first;
+    string tmp;
+    int test = 0;
     
-    while (_lhs[last] != '\0')
+    last = first = 0;
+    while (_e[last] != '\0')
     {
-        _sign(last, sign);
+        _sign(_e, last, sign);
+        if (f)
+            sign = ~sign;
         t = new Term(sign);
-        getTerm(_lhs, tmp, last, first, test);
+        getTerm(_e, tmp, last, first, test);
         assign_term(tmp, t);
-        exp_terms.push_back(*t);
+        v.push_back(*t);
     }
-    exp_terms[1].toString();
+}
+
+size_t Computor::get_termslen()
+{
+    return (count_terms(_lhs) + count_terms(_rhs));
 }
 
 size_t Computor::count_terms(string exp)
