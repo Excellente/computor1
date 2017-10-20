@@ -9,6 +9,11 @@ float Term::abs(float x)
     return (x);
 }
 
+int Term::getSign()
+{
+    return (_sign);
+}
+
 float Term::getCoefficient()
 {
     return (_coeff);
@@ -22,6 +27,11 @@ float Term::getExponent()
 char Term::getBase()
 {
     return (_base);
+}
+
+void Term::setSign(int s)
+{
+    _sign = s;
 }
 
 void Term::setBase(char s)
@@ -39,14 +49,23 @@ void Term::setCoefficient(float f)
     _coeff = f;
 }
 
-Term::Term()
+Term::Term(int sign) : _sign(sign)
 {
     _flag = 0;
-    _sign = 0;
     _base = 'b';
     _coeff = 0.0f;
     _exponent = 0.0f;
 }
+
+void Term::toString()
+{
+    if (_sign == 0)
+        cout << "+";
+    else
+        cout << "-";
+    cout << _coeff << "*" << _base << "^" << _exponent;
+}
+
 
 Term &Term::operator=(const Term &rhs)
 {

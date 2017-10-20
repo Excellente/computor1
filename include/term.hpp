@@ -13,15 +13,17 @@ class Term{
         float _exponent;
 
     public:
-        Term();
         ~Term();
+        Term(int sign);
         void toString();
         float abs(float x);
 
+        int getSign();
         char getBase();
         float getExponent();
         float getCoefficient();
-        void setBase(char s);
+        void setSign(int s);
+        void setBase(char b);
         void setExponent(float e);
         void setCoefficient(float f);
 

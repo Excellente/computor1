@@ -11,20 +11,23 @@ class Computor{
         string _lhs;
         string _exp;
         string _reduced;
-        vector<Term> trm;
+        vector<Term> _exp_term;
 
     public:
         ~Computor();
+        Computor(string exp);
+
+        size_t count_terms(string exp);
+        vector<string> strsplit(string del);
+        Computor& operator=(const Computor &rhs);
+        
         void tostring();
         void solvepoly();
         void transpose();
-        Computor(string exp);
-        void groupLikeTerms(string p);        
-        size_t count_terms(string exp);
+        void _sign(int last, int &sign);        
         void assign_term(string p, Term *t);
-        vector<string> strsplit(string del);
-        Computor& operator=(const Computor &rhs);
-        void getTerm(string p, string &t, int l, int f);
+        void groupLikeTerms(string p);        
+        void getTerm(string p, string &t, int &l, int &f, int &s);
     };
 
 #endif

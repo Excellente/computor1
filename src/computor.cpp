@@ -40,34 +40,47 @@ void Computor::assign_term(string p, Term *t)
     t->setBase(p.substr(sz, 2)[0]);
 }
 
-void Computor::getTerm(string p, string &t, int last, int first)
+void Computor::getTerm(string p, string &t, int &last, int &first, int &test)
 {
-    static int test = 0;    
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
         last++;
     t = p.substr(first, last - first);
     last++;
-    if (test == 2)
-    cout << t << endl << last << endl;
     first = last;
     test += 1;
 }
 
+void Computor::_sign(int last, int &sign)
+{
+    if (last > 0)
+    {
+        if (_lhs[last - 1] == '+')
+            sign = 0;
+        else if (_lhs[last - 1] == '-')
+            sign = 1;
+    }
+}
+
 void Computor::groupLikeTerms(string p)
 {
-    size_t i;
-    size_t j;
+    Term *t;
     string tmp;
-    Term t = Term();
-    static int last;
-    static int first;
+    vector<Term> exp_terms;
+    
+    int sign = 0;
     int test = 0;
-    while (p[last] != '\0' && test < 3)
+    int last;
+    int first;
+    
+    while (_lhs[last] != '\0')
     {
-        getTerm(_exp, tmp, last, first);
-        test++;
+        _sign(last, sign);
+        t = new Term(sign);
+        getTerm(_lhs, tmp, last, first, test);
+        assign_term(tmp, t);
+        exp_terms.push_back(*t);
     }
-    // assign_term(_exp, &t);
+    exp_terms[1].toString();
 }
 
 size_t Computor::count_terms(string exp)
