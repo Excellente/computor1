@@ -38,16 +38,18 @@ void Computor::solvepoly()
 {
     transpose();    
     if (_h_power > 2)
-        cout << "The polynomial is of order > 2";
+        cout << "The polynomial is of order > 2" << endl;
     else
         addLikeTerms();
 }
 
 void Computor::transpose()
 {
-    int sign = 0;
+    int sign;
 
+    sign = 0;
     stringToTerm(_lhs, sign, 0);
+    sign = 0;
     stringToTerm(_rhs, sign, 1);
 }
 
@@ -114,48 +116,42 @@ void Computor::printTerms(vector<Term> v)
 void Computor::addLikeTerms()
 {
     vector<Term> lt;
+    vector<float> ig;
     v_iter_t evi = _exp_terms.end();
     v_iter_t bvi = _exp_terms.begin();
 
-    // for (int i = 0; bvi != evi && i < 1; i++)
-    // {
-    //     reduce(lt, bvi, evi);
-    //     bvi++;
-    // }
-    vector<int> j;
-    for (int i = 0; i < 3; i++)
-        j.push_back(i);
-    j.push_back(3);
-    deleteN(j);
-    printTerms(_exp_terms);    
-    // printTerms(lt);
+    for (; bvi != evi;)
+    {
+        if (!ignore(ig, bvi->getExponent()))
+        {
+            reduce(lt, bvi, evi);
+            ig.push_back(bvi->getExponent());
+        }
+        bvi++;
+    }
+    _exp_terms = lt;
+    printTerms(_exp_terms);
 }
 
-void Computor::deleteN(vector<int> del)
+bool Computor::ignore(vector<float> del, float _exp)
 {
-    int len = *(del.end() - 1);
+    vector<float>::iterator bvi = del.begin();
+    vector<float>::iterator evi = del.end();
 
-    int i = 0;
-    len = 5;
-    while (i < 3)
+    for (; bvi != evi; bvi++)
     {
-        _exp_terms.erase(_exp_terms.begin());
-        i++;
+        if (_exp == *bvi)
+            return (true);
     }
-    // printTerms(_exp_terms);    
+    return (false);
 }
 
 void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
 {
-    int er;
-    int len;
-    vector<int> del;
     static int i;
     v_iter_t tmp;
     v_iter_t prev;
 
-    er = 1;
-    len = 0;
     lt.push_back(*bvi);
     // bvi->toString();
     // cout << " " << endl;
@@ -163,19 +159,14 @@ void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
     {
         if (bvi->getExponent() == tmp->getExponent())
         {
-            // cout << endl << "current = ";lt[i].toString();
-            // cout << endl;
-            // tmp->toString();
-            // cout << " " << endl;
+            cout << endl << "current = ";lt[i].toString();
+            cout << endl;
+            tmp->toString();
+            cout << " " << endl;
             lt[i] = lt[i] + *tmp;
-            del.push_back(er);
-            len++;
         }
-        er++;
         tmp++;
     }
-    del.push_back(len);
-    deleteN(del);
     i++;
 }
 
