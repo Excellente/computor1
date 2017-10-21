@@ -24,8 +24,6 @@ void Computor::toString()
 {
     int len = count_terms(_exp_terms);
 
-    // cout << "lhs = " << _lhs << "\nrhs = " << _rhs <<
-    // "\nreduced form = " << _reduced << endl << endl;
     for (int i = 0; i < len; i++)
     {
         _exp_terms[i].toString();
@@ -36,11 +34,19 @@ void Computor::toString()
 
 void Computor::solvepoly()
 {
-    transpose();    
+    transpose();
+    addLikeTerms();
     if (_h_power > 2)
         cout << "The polynomial is of order > 2" << endl;
     else
-        addLikeTerms();
+    {
+        find_ABC();
+        // if (_CBA[2] == 0)
+            solvelinear();
+        // else
+            // quadraticForm();
+        output();
+    }
 }
 
 void Computor::transpose()
@@ -86,7 +92,7 @@ void Computor::assign_term(string p, Term *t)
     sz = p.find("^") + 1;
     t->setExponent(stof(p.substr(sz, 4), &sz));
     sz = p.find("^") - 1;
-    if (_h_power < t->getExponent())
+    if (_h_power < t->getExponent() && t->getCoefficient() != 0)
         _h_power = t->getExponent();
     t->setBase(p.substr(sz, 2)[0]);
 }
@@ -113,6 +119,19 @@ void Computor::printTerms(vector<Term> v)
     cout << endl;
 }
 
+bool Computor::ignore(vector<float> del, float _exp)
+{
+    vector<float>::iterator bvi = del.begin();
+    vector<float>::iterator evi = del.end();
+
+    for (; bvi != evi; bvi++)
+    {
+        if (_exp == *bvi)
+            return (true);
+    }
+    return (false);
+}
+
 void Computor::addLikeTerms()
 {
     vector<Term> lt;
@@ -130,20 +149,90 @@ void Computor::addLikeTerms()
         bvi++;
     }
     _exp_terms = lt;
-    printTerms(_exp_terms);
 }
 
-bool Computor::ignore(vector<float> del, float _exp)
+void Computor::find_ABC()
 {
-    vector<float>::iterator bvi = del.begin();
-    vector<float>::iterator evi = del.end();
+    v_iter_t evi = _exp_terms.end();
+    v_iter_t bvi = _exp_terms.begin();
 
     for (; bvi != evi; bvi++)
     {
-        if (_exp == *bvi)
-            return (true);
+        if (bvi->getSign() == 1)
+            _CBA.push_back(bvi->getCoefficient() * -1);
+        else
+            _CBA.push_back(bvi->getCoefficient());
     }
-    return (false);
+}
+
+void Computor::solvelinear()
+{
+    float c = _CBA[0] * -1;
+    float b = _CBA[1];
+
+    _sol1 = c / b;
+}
+
+void Computor::quadraticForm()
+{
+    float negb;
+    float rootd;
+    float denom;
+
+    _flag = 0;
+    _discrimi = pow(_CBA[1], 2.0f) - 4 * _CBA[2] * _CBA[0];
+    negb = -_CBA[1];
+    rootd = sqrt(_discrimi);
+    denom = 2 * _CBA[2];
+    if (_discrimi > 0)
+    {
+        _flag = 1;
+        _sol1 = (negb + rootd) / denom;
+        _sol2 = (negb - rootd) / denom;
+    }
+    else if (_discrimi == 0)
+        _sol1 = negb / denom;
+    else
+        _flag = -1;
+}
+
+void Computor::output()
+{
+    string tmp;
+    v_iter_t evi = _exp_terms.end();
+    v_iter_t bvi = _exp_terms.begin();
+
+    cout << "Reduced Form: ";
+    for (; bvi != evi; bvi++)
+    {
+        if (bvi->getSign() == 1)
+            cout << " - ";
+        else
+            if (bvi != evi)
+                cout << " + ";
+        bvi->toString();
+    }
+    cout << " = 0" << endl;
+    cout << "Polynomial Degree: " << _h_power << endl;
+    cout << _sol1 << endl;
+    // if (_CBA[1] == 0 && _CBA[2] == 0 && _exp_terms[0].getCoefficient() == 0)
+    //     cout << "The solution is:\nX ∈ ℝ, ∀ X != 0\n";
+    // else if (_CBA[1] == 0 && _CBA[2] == 0 && _exp_terms[0].getCoefficient() != 0)
+    //     cout << "No Solution\n";
+    // else if (_CBA[2] == 0)
+    //     cout << "The Solution is:\n" << _sol1 << endl;
+    // else if (_CBA[2] != 0)
+    // {
+    //     if (_flag > 0)
+    //     {
+    //         cout << "The Solutions are: " << endl;
+    //         cout << _sol1 << "\n" << _sol2 << endl;
+    //     }
+    //     else if (_flag == 0)
+    //         cout << "The Solution is:\n" << _sol1 << endl;
+    //     else
+    //         cout << "No Real Solution" << endl;
+    // }
 }
 
 void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
@@ -153,18 +242,10 @@ void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
     v_iter_t prev;
 
     lt.push_back(*bvi);
-    // bvi->toString();
-    // cout << " " << endl;
     for (tmp = bvi + 1; tmp != evi;)
     {
         if (bvi->getExponent() == tmp->getExponent())
-        {
-            cout << endl << "current = ";lt[i].toString();
-            cout << endl;
-            tmp->toString();
-            cout << " " << endl;
             lt[i] = lt[i] + *tmp;
-        }
         tmp++;
     }
     i++;

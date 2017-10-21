@@ -59,11 +59,7 @@ Term::Term(int sign) : _sign(sign)
 
 void Term::toString()
 {
-    if (_sign == 0)
-        cout << "+";
-    else
-        cout << "-";
-    cout << _coeff << "*" << _base << "^" << _exponent;
+    cout << _coeff << " * " << _base << "^" << _exponent;
 }
 
 
