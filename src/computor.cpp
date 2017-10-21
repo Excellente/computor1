@@ -20,12 +20,12 @@ Computor &Computor::operator=(const Computor &rhs)
     return (*this);
 }
 
-void Computor::tostring()
+void Computor::toString()
 {
-    int len = count_terms();
+    int len = count_terms(_exp_terms);
 
-    cout << "lhs = " << _lhs << "\nrhs = " << _rhs <<
-    "\nreduced form = " << _reduced << endl << endl;
+    // cout << "lhs = " << _lhs << "\nrhs = " << _rhs <<
+    // "\nreduced form = " << _reduced << endl << endl;
     for (int i = 0; i < len; i++)
     {
         _exp_terms[i].toString();
@@ -62,8 +62,13 @@ void Computor::stringToTerm(string _e, int &sign, int f)
     while (_e[last] != '\0')
     {
         _sign(_e, last, sign);
-        if (f)
-            sign = ~sign;
+        if (f == 1)
+        {
+            if (sign == 1)
+                sign = 0;
+            else
+                sign = 1;
+        }
         t = new Term(sign);
         getTerm(_e, tmp, last, first);
         assign_term(tmp, t);
@@ -94,13 +99,13 @@ void Computor::getTerm(string p, string &t, int &last, int &first)
     first = last;
 }
 
-void Computor::printTerms()
+void Computor::printTerms(vector<Term> v)
 {
-    int len = count_terms();
+    int len = count_terms(v);
 
     for (int j = 0; j < len; j++)
     {
-        _exp_terms[j].toString();
+        v[j].toString();
         cout << " ";
     }
     cout << endl;
@@ -108,32 +113,70 @@ void Computor::printTerms()
 
 void Computor::addLikeTerms()
 {
-    int len = count_terms();
-    vector<Term>::iterator tmp;
-    vector<Term>::iterator evi = _exp_terms.end();
-    vector<Term>::iterator bvi = _exp_terms.begin();
+    vector<Term> lt;
+    v_iter_t evi = _exp_terms.end();
+    v_iter_t bvi = _exp_terms.begin();
 
-    // printTerms();
-    for (int i = 0; i < len; i++)
+    // for (int i = 0; bvi != evi && i < 1; i++)
+    // {
+    //     reduce(lt, bvi, evi);
+    //     bvi++;
+    // }
+    vector<int> j;
+    for (int i = 0; i < 3; i++)
+        j.push_back(i);
+    j.push_back(3);
+    deleteN(j);
+    printTerms(_exp_terms);    
+    // printTerms(lt);
+}
+
+void Computor::deleteN(vector<int> del)
+{
+    int len = *(del.end() - 1);
+
+    int i = 0;
+    len = 5;
+    while (i < 3)
     {
-        tmp = bvi + 1;
-        cout << "start iteration" << endl;
-        for (int j = i; j < len; j++)
-        {
-            tmp->toString();cout << " <-> expo =" << tmp->getExponent() << endl<< endl;
-            if (tmp != bvi && (bvi->getExponent() == tmp->getExponent()))
-            {
-                cout << "hit: "; tmp->toString();cout << endl<< endl;
-                len = count_terms();
-                *bvi = *bvi + *tmp;
-                _exp_terms.erase(tmp);
-            }
-            tmp++;
-        }
-        cout << "end iteration" << endl;
-        bvi++;
+        _exp_terms.erase(_exp_terms.begin());
+        i++;
     }
-    // printTerms();
+    // printTerms(_exp_terms);    
+}
+
+void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
+{
+    int er;
+    int len;
+    vector<int> del;
+    static int i;
+    v_iter_t tmp;
+    v_iter_t prev;
+
+    er = 1;
+    len = 0;
+    lt.push_back(*bvi);
+    // bvi->toString();
+    // cout << " " << endl;
+    for (tmp = bvi + 1; tmp != evi;)
+    {
+        if (bvi->getExponent() == tmp->getExponent())
+        {
+            // cout << endl << "current = ";lt[i].toString();
+            // cout << endl;
+            // tmp->toString();
+            // cout << " " << endl;
+            lt[i] = lt[i] + *tmp;
+            del.push_back(er);
+            len++;
+        }
+        er++;
+        tmp++;
+    }
+    del.push_back(len);
+    deleteN(del);
+    i++;
 }
 
 void Computor::_sign(string _e, int last, int &sign)
@@ -147,11 +190,11 @@ void Computor::_sign(string _e, int last, int &sign)
     }
 }
 
-size_t Computor::count_terms()
+size_t Computor::count_terms(vector<Term> v)
 {
     size_t terms;
-    vector<Term>::iterator evi = _exp_terms.end();
-    vector<Term>::iterator bvi = _exp_terms.begin();
+    vector<Term>::iterator evi = v.end();
+    vector<Term>::iterator bvi = v.begin();
 
     terms = 0;
     while (bvi != evi)

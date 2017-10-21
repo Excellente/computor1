@@ -97,10 +97,8 @@ Term &Term::operator+(const Term &rhs)
         if (_coeff < 0)
         {
             _coeff = abs(_coeff);
-            _sign = 1;
+            _sign = rhs._sign;
         }
-        else
-            _sign = 0;
     }
     return (*this);
 }
