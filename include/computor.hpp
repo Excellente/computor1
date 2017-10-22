@@ -9,7 +9,6 @@ typedef vector<Term>::iterator v_iter_t;
 class Computor{
 
     private:
-        int _flag;
         float _sol1;
         float _sol2;
         string _rhs;
@@ -25,7 +24,8 @@ class Computor{
         ~Computor();
         Computor(string e);
 
-        size_t count_terms(vector<Term> v);
+        template <class T>
+        size_t count_terms(vector<T> v);
         vector<string> strsplit(string d);
         Computor& operator=(const Computor &r);
         bool ignore(vector<float> del, float _exp);

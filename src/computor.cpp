@@ -36,17 +36,12 @@ void Computor::solvepoly()
 {
     transpose();
     addLikeTerms();
-    if (_h_power > 2)
-        cout << "The polynomial is of order > 2" << endl;
-    else
-    {
-        find_ABC();
-        // if (_CBA[2] == 0)
-            solvelinear();
-        // else
-            // quadraticForm();
-        output();
-    }
+    find_ABC();
+    if (_h_power == 1)
+        solvelinear();
+    else if (_h_power == 2)
+        quadraticForm();
+    output();
 }
 
 void Computor::transpose()
@@ -92,8 +87,6 @@ void Computor::assign_term(string p, Term *t)
     sz = p.find("^") + 1;
     t->setExponent(stof(p.substr(sz, 4), &sz));
     sz = p.find("^") - 1;
-    if (_h_power < t->getExponent() && t->getCoefficient() != 0)
-        _h_power = t->getExponent();
     t->setBase(p.substr(sz, 2)[0]);
 }
 
@@ -162,6 +155,8 @@ void Computor::find_ABC()
             _CBA.push_back(bvi->getCoefficient() * -1);
         else
             _CBA.push_back(bvi->getCoefficient());
+        if (_h_power < bvi->getExponent() && bvi->getCoefficient() != 0)
+            _h_power = bvi->getExponent();
     }
 }
 
@@ -179,21 +174,18 @@ void Computor::quadraticForm()
     float rootd;
     float denom;
 
-    _flag = 0;
     _discrimi = pow(_CBA[1], 2.0f) - 4 * _CBA[2] * _CBA[0];
     negb = -_CBA[1];
     rootd = sqrt(_discrimi);
     denom = 2 * _CBA[2];
     if (_discrimi > 0)
     {
-        _flag = 1;
         _sol1 = (negb + rootd) / denom;
         _sol2 = (negb - rootd) / denom;
     }
     else if (_discrimi == 0)
         _sol1 = negb / denom;
-    else
-        _flag = -1;
+    else;
 }
 
 void Computor::output()
@@ -208,31 +200,33 @@ void Computor::output()
         if (bvi->getSign() == 1)
             cout << " - ";
         else
-            if (bvi != evi)
+            if (bvi != _exp_terms.begin())
                 cout << " + ";
         bvi->toString();
     }
     cout << " = 0" << endl;
     cout << "Polynomial Degree: " << _h_power << endl;
-    cout << _sol1 << endl;
-    // if (_CBA[1] == 0 && _CBA[2] == 0 && _exp_terms[0].getCoefficient() == 0)
-    //     cout << "The solution is:\nX ∈ ℝ, ∀ X != 0\n";
-    // else if (_CBA[1] == 0 && _CBA[2] == 0 && _exp_terms[0].getCoefficient() != 0)
-    //     cout << "No Solution\n";
-    // else if (_CBA[2] == 0)
-    //     cout << "The Solution is:\n" << _sol1 << endl;
-    // else if (_CBA[2] != 0)
-    // {
-    //     if (_flag > 0)
-    //     {
-    //         cout << "The Solutions are: " << endl;
-    //         cout << _sol1 << "\n" << _sol2 << endl;
-    //     }
-    //     else if (_flag == 0)
-    //         cout << "The Solution is:\n" << _sol1 << endl;
-    //     else
-    //         cout << "No Real Solution" << endl;
-    // }
+    if (_h_power == 0 && _exp_terms[0].getCoefficient() == 0)
+        cout << "The solution is:\nX ∈ ℝ, ∀ X != 0\n";
+    else if (_h_power == 0 && _exp_terms[0].getCoefficient() != 0)
+        cout << "No Solution\n";
+    else if (_h_power == 1)
+        cout << "The Solution is:\n" << _sol1 << endl;
+    else if (_h_power == 2)
+    {
+        if (_discrimi > 0)
+        {
+            cout << "The Solutions are: " << endl;
+            cout << _sol1 << "\n" << _sol2 << endl;
+        }
+        else if (_discrimi == 0)
+            cout << "The Solution is:\n" << _sol1 << endl;
+        else
+            cout << "No Real Solution" << endl;
+    }
+    else if (_h_power > 2)
+        cout << "Can't solve polynomial of order > 2" << endl;
+
 }
 
 void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
@@ -262,11 +256,12 @@ void Computor::_sign(string _e, int last, int &sign)
     }
 }
 
-size_t Computor::count_terms(vector<Term> v)
+template <class T>
+size_t Computor::count_terms(vector<T> v)
 {
     size_t terms;
-    vector<Term>::iterator evi = v.end();
-    vector<Term>::iterator bvi = v.begin();
+    typename vector<T>::iterator evi = v.end();
+    typename vector<T>::iterator bvi = v.begin();
 
     terms = 0;
     while (bvi != evi)
