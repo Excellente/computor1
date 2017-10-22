@@ -290,3 +290,18 @@ vector<string> Computor::strsplit(string del)
         terms.push_back(_exp.substr(delpos[i - 1] + 1, (delpos[i] - delpos[i - 1]) - 1));
     return (terms);
 }
+
+const char *TermFormatException::what() const throw()
+{
+    return ("WrongTermFormat");
+}
+
+void Computor::checkTermFormat(Term &t)
+{
+    TermFormatException tfe;
+
+    if (t.getExponent() < 0.0f)
+        throw tfe;
+    // else if ()
+        throw tfe;
+}

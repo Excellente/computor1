@@ -6,6 +6,11 @@
 
 typedef vector<Term>::iterator v_iter_t;
 
+class TermFormatException : public std::exception{
+    public:
+        virtual const char * what() const throw();
+};
+
 class Computor{
 
     private:
@@ -30,6 +35,7 @@ class Computor{
         Computor& operator=(const Computor &r);
         bool ignore(vector<float> del, float _exp);
 
+        void checkTermFormat(Term &t);        
         void output();
         void simplify();        
         void toString();
