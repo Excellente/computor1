@@ -57,9 +57,18 @@ Term::Term(int sign) : _sign(sign)
     _exponent = 0.0f;
 }
 
-void Term::toString()
+void Term::toString(int f)
 {
-    cout << _coeff << " * " << _base << "^" << _exponent;
+    if (f == 0 && _sign == 0)
+        cout << _coeff << " * " << _base << "^" << _exponent;
+    else
+    {
+        if (_sign == 1)
+            cout << " -";
+        else
+            cout << " +";
+        cout << " " << _coeff << " * " << _base << "^" << _exponent;
+    }
 }
 
 

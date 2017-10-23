@@ -24,11 +24,7 @@ void Computor::toString()
 {
     int len = count_terms(_exp_terms);
 
-    for (int i = 0; i < len; i++)
-    {
-        _exp_terms[i].toString();
-        cout << " ";
-    }
+    printTerms(_exp_terms);
     cout << endl;
 }
 
@@ -136,18 +132,6 @@ void Computor::assign_term(string p, Term *t)
     t->setBase(p.substr(sz, 2)[0]);
 }
 
-void Computor::printTerms(vector<Term> v)
-{
-    int len = count_terms(v);
-
-    for (int j = 0; j < len; j++)
-    {
-        v[j].toString();
-        cout << " ";
-    }
-    cout << endl;
-}
-
 bool Computor::ignore(vector<float> del, float _exp)
 {
     vector<float>::iterator bvi = del.begin();
@@ -182,18 +166,31 @@ void Computor::addLikeTerms()
 
 void Computor::find_ABC()
 {
+    float _sign;
+    float expo;
+    float coeff;
+    float tmpabc[3] = {0.0f, 0.0f, 0.0f};
     v_iter_t evi = _exp_terms.end();
     v_iter_t bvi = _exp_terms.begin();
 
     for (; bvi != evi; bvi++)
     {
+        _sign = 1;
         if (bvi->getSign() == 1)
-            _CBA.push_back(bvi->getCoefficient() * -1);
-        else
-            _CBA.push_back(bvi->getCoefficient());
+            _sign *= -1;
+        expo = bvi->getExponent();
+        coeff = bvi->getCoefficient();
+        if (expo == 0)
+            tmpabc[0] = coeff * _sign;
+        else if (expo == 1)
+            tmpabc[1] = coeff * _sign;
+        else if (expo == 2)
+            tmpabc[2] = coeff * _sign;
         if (_h_power < bvi->getExponent() && bvi->getCoefficient() != 0)
             _h_power = bvi->getExponent();
     }
+    for (int i = 0; i < 3; i++)
+        _CBA.push_back(tmpabc[i]);
 }
 
 void Computor::solvelinear()
@@ -224,60 +221,23 @@ void Computor::quadraticForm()
     else;
 }
 
-void Computor::output()
-{
-    string tmp;
-    v_iter_t evi = _exp_terms.end();
-    v_iter_t bvi = _exp_terms.begin();
-
-    cout << "Reduced Form: ";
-    for (; bvi != evi; bvi++)
-    {
-        if (bvi->getSign() == 1)
-            cout << " - ";
-        else
-            if (bvi != _exp_terms.begin())
-                cout << " + ";
-        bvi->toString();
-    }
-    cout << " = 0" << endl;
-    cout << "Polynomial Degree: " << _h_power << endl;
-    if (_h_power == 0 && _exp_terms[0].getCoefficient() == 0)
-        cout << "The solution is:\nX ∈ ℝ, ∀ X != 0\n";
-    else if (_h_power == 0 && _exp_terms[0].getCoefficient() != 0)
-        cout << "No Solution\n";
-    else if (_h_power == 1)
-        cout << "The Solution is:\n" << _sol1 << endl;
-    else if (_h_power == 2)
-    {
-        if (_discrimi > 0)
-        {
-            cout << "The Solutions are: " << endl;
-            cout << _sol1 << "\n" << _sol2 << endl;
-        }
-        else if (_discrimi == 0)
-            cout << "The Solution is:\n" << _sol1 << endl;
-        else
-            cout << "No Real Solution" << endl;
-    }
-    else if (_h_power > 2)
-        cout << "The polynomial degree is stricly greater than 2, I can't solve." << endl;
-
-}
-
 void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
 {
     static int i;
     v_iter_t tmp;
-    v_iter_t prev;
+    v_iter_t hit;
 
     lt.push_back(*bvi);
     for (tmp = bvi + 1; tmp != evi;)
     {
         if (bvi->getExponent() == tmp->getExponent())
-            lt[i] = lt[i] + *tmp;
+        {
+            lt[i] += *tmp;
+            hit = tmp;
+        }
         tmp++;
     }
+    // likeTermsVerbose(lt, hit, bvi);
     i++;
 }
 
@@ -316,16 +276,41 @@ vector<string> Computor::strsplit(string del)
     return (terms);
 }
 
+void Computor::likeTermsVerbose(vector<Term> &lt, v_iter_t t, v_iter_t bvi)
+{
+    v_iter_t tmp = bvi;
+    v_iter_t evi = _exp_terms.end();
+
+    cout << "*****===Steps===******\n";
+    cout << "Add like terms: ";
+    printTerms(lt);
+    for (; tmp != evi; tmp++)
+    {
+        if (tmp == t || tmp == bvi)
+            continue;
+        tmp->toString(1);
+    }
+    cout << " = 0" << endl;
+    cout << "*****===Steps===******\n\n";
+}
+
+void Computor::printTerms(vector<Term> v)
+{
+    int len = count_terms(v);
+
+    for (int j = 0; j < len; j++)
+        v[j].toString(j);
+}
+
 void Computor::debugmode(string debug)
 {
     int len = count_terms(_CBA);
 
-    cout << endl <<"========== Entered debug mode ==========" << endl;
+    cout <<"========== Entered debug mode ==========" << endl;
     if (debug.compare("-d") == 0)
-        cout << _discrimi << endl;
+        cout << "discriminant = " <<_discrimi << endl;
     else if (debug.compare("-abc") == 0)
     {
-        for (int i = 0; i < len; i++)
             cout
                 << "a = " << _CBA[2]
                 << ", b = " << _CBA[1]
@@ -335,8 +320,7 @@ void Computor::debugmode(string debug)
     }
     else if (debug.compare("-dabc") == 0)
     {
-        cout << _discrimi << endl;        
-        for (int i = 0; i < len; i++)
+        cout << "discriminant = " <<_discrimi << endl;
         cout
             << "a = " << _CBA[2]
             << ", b = " << _CBA[1]
@@ -360,4 +344,43 @@ void Computor::checkTermFormat(Term &t)
         throw tfe;
     // else if ()
         throw tfe;
+}
+
+void Computor::output()
+{
+    string tmp;
+    v_iter_t evi = _exp_terms.end();
+    v_iter_t bvi = _exp_terms.begin();
+
+    cout << "Reduced Form: ";
+    for (; bvi != evi; bvi++)
+    {
+        if (bvi == _exp_terms.begin())
+            bvi->toString(0);
+        else
+            bvi->toString(1);
+    }
+    cout << " = 0" << endl;
+    cout << "Polynomial Degree: " << _h_power << endl;
+    if (_h_power == 0 && _exp_terms[0].getCoefficient() == 0)
+        cout << "The solution is:\nX ∈ ℝ\n";
+    else if (_h_power == 0 && _exp_terms[0].getCoefficient() != 0)
+        cout << "No Solution\n";
+    else if (_h_power == 1)
+        cout << "The Solution is:\n" << _sol1 << endl;
+    else if (_h_power == 2)
+    {
+        if (_discrimi > 0)
+        {
+            cout << "The Solutions are: " << endl;
+            cout << _sol1 << "\n" << _sol2 << endl;
+        }
+        else if (_discrimi == 0)
+            cout << "The Solution is:\n" << _sol1 << endl;
+        else
+            cout << "No Real Solution" << endl;
+    }
+    else if (_h_power > 2)
+        cout << "The polynomial degree is stricly greater than 2, I can't solve." << endl;
+
 }

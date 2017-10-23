@@ -54,6 +54,7 @@ class Computor{
         void stringToTerm(string e, int &s, int f);
         void getTerm(string p, string &t, int &l, int &f);
         void reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi);
+        void likeTermsVerbose(vector<Term> &lt, v_iter_t t, v_iter_t bvi);
     };
 
 #endif
