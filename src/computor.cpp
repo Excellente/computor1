@@ -67,6 +67,7 @@ void Computor::stringToTerm(string _e, int &sign, int f)
         _sign(_e, last, sign);
         if (f == 1)
         {
+            cout << endl << sign << endl;
             if (sign == 1)
                 sign = 0;
             else
@@ -79,17 +80,6 @@ void Computor::stringToTerm(string _e, int &sign, int f)
     }
 }
 
-void Computor::assign_term(string p, Term *t)
-{
-    string::size_type sz;
-
-    t->setCoefficient(stof(p, &sz));
-    sz = p.find("^") + 1;
-    t->setExponent(stof(p.substr(sz, 4), &sz));
-    sz = p.find("^") - 1;
-    t->setBase(p.substr(sz, 2)[0]);
-}
-
 void Computor::getTerm(string p, string &t, int &last, int &first)
 {
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
@@ -98,6 +88,57 @@ void Computor::getTerm(string p, string &t, int &last, int &first)
     if (p[last] != '\0')
         last++;
     first = last;
+}
+
+void Computor::_sign(string &_e, int &last, int &sign)
+{
+    if (last > 0)
+    {
+        cout << "never called\n";
+        if (_e[last - 1] == '+')
+            sign = 0;
+        else if (_e[last - 1] == '-')
+            sign = 1;
+    }
+    else
+        lead_sign(_e, sign, last);
+}
+
+void Computor::lead_sign(string &p, int &_sign, int &last)
+{
+    int numsign;
+
+    while (!(p[last] >= 48 && p[last] <= 57))
+    {
+        if (p[last] == '+' || p[last] == '-')
+        {
+            if (p[last] == '-')
+            {
+                cout << "debugging -> " << p[last] << endl;
+                _sign = 1;
+            }
+            else
+                _sign = 0;
+            if ((numsign += 1) > 1)
+                _err = 1;
+            
+        }
+        last++;
+    }
+    p = p.substr(last, string::npos);
+}
+
+void Computor::assign_term(string p, Term *t)
+{
+    string::size_type sz;
+
+    t->setCoefficient(stof(p, &sz));
+    sz = p.find("^") + 1;
+    while (p[sz] == ' ') sz++;
+    t->setExponent(stof(p.substr(sz, 4), &sz));
+    sz = p.find("^") - 1;
+    while (p[sz] == ' ') sz--;
+    t->setBase(p.substr(sz, 2)[0]);
 }
 
 void Computor::printTerms(vector<Term> v)
@@ -225,7 +266,7 @@ void Computor::output()
             cout << "No Real Solution" << endl;
     }
     else if (_h_power > 2)
-        cout << "Can't solve polynomial of order > 2" << endl;
+        cout << "The polynomial degree is stricly greater than 2, I can't solve." << endl;
 
 }
 
@@ -243,17 +284,6 @@ void Computor::reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi)
         tmp++;
     }
     i++;
-}
-
-void Computor::_sign(string _e, int last, int &sign)
-{
-    if (last > 0)
-    {
-        if (_e[last - 1] == '+')
-            sign = 0;
-        else if (_e[last - 1] == '-')
-            sign = 1;
-    }
 }
 
 template <class T>

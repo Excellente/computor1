@@ -14,6 +14,7 @@ class TermFormatException : public std::exception{
 class Computor{
 
     private:
+        int _err;
         float _sol1;
         float _sol2;
         string _rhs;
@@ -35,6 +36,7 @@ class Computor{
         Computor& operator=(const Computor &r);
         bool ignore(vector<float> del, float _exp);
 
+        void lead_sign(string &p, int &_sign, int &last);
         void checkTermFormat(Term &t);        
         void output();
         void simplify();        
@@ -46,7 +48,7 @@ class Computor{
         void addLikeTerms();
         void quadraticForm();
         void printTerms(vector<Term> v);
-        void _sign(string e, int l, int &s);
+        void _sign(string &e, int &l, int &s);
         void assign_term(string p, Term *t);
         void stringToTerm(string e, int &s, int f);
         void getTerm(string p, string &t, int &l, int &f);
