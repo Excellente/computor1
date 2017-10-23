@@ -47,12 +47,13 @@ class Computor{
         void solvelinear();
         void addLikeTerms();
         void quadraticForm();
+        void debugmode(string d);
         void printTerms(vector<Term> v);
         void _sign(string &e, int &l, int &s);
         void assign_term(string p, Term *t);
         void stringToTerm(string e, int &s, int f);
         void getTerm(string p, string &t, int &l, int &f);
-        void reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi);        
+        void reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi);
     };
 
 #endif

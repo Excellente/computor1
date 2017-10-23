@@ -67,7 +67,6 @@ void Computor::stringToTerm(string _e, int &sign, int f)
         _sign(_e, last, sign);
         if (f == 1)
         {
-            cout << endl << sign << endl;
             if (sign == 1)
                 sign = 0;
             else
@@ -94,7 +93,6 @@ void Computor::_sign(string &_e, int &last, int &sign)
 {
     if (last > 0)
     {
-        cout << "never called\n";
         if (_e[last - 1] == '+')
             sign = 0;
         else if (_e[last - 1] == '-')
@@ -113,10 +111,7 @@ void Computor::lead_sign(string &p, int &_sign, int &last)
         if (p[last] == '+' || p[last] == '-')
         {
             if (p[last] == '-')
-            {
-                cout << "debugging -> " << p[last] << endl;
                 _sign = 1;
-            }
             else
                 _sign = 0;
             if ((numsign += 1) > 1)
@@ -319,6 +314,37 @@ vector<string> Computor::strsplit(string del)
     for (int i = 1; i < len; i++)
         terms.push_back(_exp.substr(delpos[i - 1] + 1, (delpos[i] - delpos[i - 1]) - 1));
     return (terms);
+}
+
+void Computor::debugmode(string debug)
+{
+    int len = count_terms(_CBA);
+
+    cout << endl <<"========== Entered debug mode ==========" << endl;
+    if (debug.compare("-d") == 0)
+        cout << _discrimi << endl;
+    else if (debug.compare("-abc") == 0)
+    {
+        for (int i = 0; i < len; i++)
+            cout
+                << "a = " << _CBA[2]
+                << ", b = " << _CBA[1]
+                << ", c = " << _CBA[0] <<
+            endl;
+
+    }
+    else if (debug.compare("-dabc") == 0)
+    {
+        cout << _discrimi << endl;        
+        for (int i = 0; i < len; i++)
+        cout
+            << "a = " << _CBA[2]
+            << ", b = " << _CBA[1]
+            << ", c = " << _CBA[0] <<
+        endl;
+    }
+    else
+        cout << "ERROR: Debug text " << debug << endl;
 }
 
 const char *TermFormatException::what() const throw()

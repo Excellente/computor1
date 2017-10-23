@@ -7,8 +7,14 @@ int main(int argc, char *argv[])
 
     if (argc == 2)
     {
+        if (strcmp(argv[1], "") == 0)
+            cout << "please enter poylynomial to solve\n";
         pcalc.solvepoly();
-        // pcalc.toString();
+    }
+    else if (argc == 3)
+    {
+        pcalc.solvepoly();
+        pcalc.debugmode(argv[2]);
     }
     else
         cout << "exception not handled" << endl;
