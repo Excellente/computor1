@@ -75,6 +75,16 @@ void Computor::stringToTerm(string _e, int &sign, int f)
     }
 }
 
+void Computor::checkTermFormat(string &t)
+{
+    regex rg("(\\+|-)?(\\s)?[[:digit:]]+(\\.([[:digit:]]+))?(\\s+)?(\\*)?(\\s+)?(X(\\^([[:digit:]]+))?)?");
+
+    if (!regex_match(t, rg))
+    {
+        cout << "Term not properly formatted\n";
+    }
+}
+
 void Computor::getTerm(string p, string &t, int &last, int &first)
 {
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
@@ -83,6 +93,7 @@ void Computor::getTerm(string p, string &t, int &last, int &first)
     if (p[last] != '\0')
         last++;
     first = last;
+    // checkTermFormat(t);
 }
 
 void Computor::_sign(string &_e, int &last, int &sign)
@@ -334,16 +345,6 @@ void Computor::debugmode(string debug)
 const char *TermFormatException::what() const throw()
 {
     return ("WrongTermFormat");
-}
-
-void Computor::checkTermFormat(Term &t)
-{
-    TermFormatException tfe;
-
-    if (t.getExponent() < 0.0f)
-        throw tfe;
-    // else if ()
-        throw tfe;
 }
 
 void Computor::output()

@@ -10,6 +10,6 @@ all:
 	$(CC) $(CFLAGS) $(SRCS) -I $(INC) -o $(EXE)
 
 clean:
-	rm -f $(EXE)
+	rm -f $(EXE) *.out
 
 re: clean all
