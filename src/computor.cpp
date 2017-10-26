@@ -75,16 +75,6 @@ void Computor::stringToTerm(string _e, int &sign, int f)
     }
 }
 
-void Computor::checkTermFormat(string &t)
-{
-    regex rg("(\\+|-)?(\\s)?[[:digit:]]+(\\.([[:digit:]]+))?(\\s+)?(\\*)?(\\s+)?(X(\\^([[:digit:]]+))?)?");
-
-    if (!regex_match(t, rg))
-    {
-        cout << "Term not properly formatted\n";
-    }
-}
-
 void Computor::getTerm(string p, string &t, int &last, int &first)
 {
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
@@ -93,7 +83,6 @@ void Computor::getTerm(string p, string &t, int &last, int &first)
     if (p[last] != '\0')
         last++;
     first = last;
-    // checkTermFormat(t);
 }
 
 void Computor::_sign(string &_e, int &last, int &sign)
@@ -112,8 +101,9 @@ void Computor::_sign(string &_e, int &last, int &sign)
 void Computor::lead_sign(string &p, int &_sign, int &last)
 {
     int numsign;
-
-    while (!(p[last] >= 48 && p[last] <= 57))
+    regex rg("(\\s+)?((-|\\+)(\\s+)?)?[[:digit:]]+(\\.[[:digit:]]+)?(\\s\\*\\s)(X|x)(\\^[[:digit:]]+)(\\s+)?");
+    
+    while (!(p[last] >= 48 && p[last] <= 57) && p[last] != '\0')
     {
         if (p[last] == '+' || p[last] == '-')
         {
@@ -128,6 +118,12 @@ void Computor::lead_sign(string &p, int &_sign, int &last)
         last++;
     }
     p = p.substr(last, string::npos);
+    
+    if (!regex_match(p, rg))
+    {
+        cerr << "Error: InvalidTermFormat\n";
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Computor::assign_term(string p, Term *t)
@@ -345,6 +341,16 @@ void Computor::debugmode(string debug)
 const char *TermFormatException::what() const throw()
 {
     return ("WrongTermFormat");
+}
+
+void Computor::checkTermFormat(Term &t)
+{
+    TermFormatException tfe;
+
+    if (t.getExponent() < 0.0f)
+        throw tfe;
+    // else if ()
+        throw tfe;
 }
 
 void Computor::output()

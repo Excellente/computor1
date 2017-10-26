@@ -36,6 +36,8 @@ class Computor{
         Computor& operator=(const Computor &r);
         bool ignore(vector<float> del, float _exp);
 
+        void lead_sign(string &p, int &_sign, int &last);
+        void checkTermFormat(Term &t);        
         void output();
         void simplify();        
         void toString();
@@ -47,11 +49,9 @@ class Computor{
         void quadraticForm();
         void debugmode(string d);
         void printTerms(vector<Term> v);
-        void checkTermFormat(string &t);        
         void _sign(string &e, int &l, int &s);
         void assign_term(string p, Term *t);
         void stringToTerm(string e, int &s, int f);
-        void lead_sign(string &p, int &_sign, int &last);
         void getTerm(string p, string &t, int &l, int &f);
         void reduce(vector<Term> &lt, v_iter_t bvi, v_iter_t evi);
         void likeTermsVerbose(vector<Term> &lt, v_iter_t t, v_iter_t bvi);
