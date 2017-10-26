@@ -4,10 +4,12 @@ Computor::Computor(string exp) : _exp(exp){
     vector<string> ret;
 
     ret = strsplit("=");
+    _sol1 = 0;
+    _sol2 = 0;
+    _h_power = 0;
     _reduced = "";
     _lhs = ret[0];
     _rhs = ret[1];
-    _h_power = 0;
 }
 
 Computor::~Computor(){
@@ -77,12 +79,20 @@ void Computor::stringToTerm(string _e, int &sign, int f)
 
 void Computor::getTerm(string p, string &t, int &last, int &first)
 {
+    regex rg("(\\s+)?((-|\\+)(\\s+)?)?[[:digit:]]+(\\.[[:digit:]]+)?(\\s\\*\\s)(X|x)(\\^[[:digit:]]+)(\\s+)?");
+    
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
         last++;
     t = p.substr(first, last - first);
     if (p[last] != '\0')
         last++;
     first = last;
+    if (!regex_match(t, rg))
+    {
+        cout << t << endl;
+        cerr << "Error: InvalidTermFormat\n";
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Computor::_sign(string &_e, int &last, int &sign)
@@ -101,7 +111,6 @@ void Computor::_sign(string &_e, int &last, int &sign)
 void Computor::lead_sign(string &p, int &_sign, int &last)
 {
     int numsign;
-    regex rg("(\\s+)?((-|\\+)(\\s+)?)?[[:digit:]]+(\\.[[:digit:]]+)?(\\s\\*\\s)(X|x)(\\^[[:digit:]]+)(\\s+)?");
     
     while (!(p[last] >= 48 && p[last] <= 57) && p[last] != '\0')
     {
@@ -118,12 +127,6 @@ void Computor::lead_sign(string &p, int &_sign, int &last)
         last++;
     }
     p = p.substr(last, string::npos);
-    
-    if (!regex_match(p, rg))
-    {
-        cerr << "Error: InvalidTermFormat\n";
-        exit(EXIT_FAILURE);
-    }
 }
 
 void Computor::assign_term(string p, Term *t)
@@ -225,6 +228,11 @@ void Computor::quadraticForm()
     }
     else if (_discrimi == 0)
         _sol1 = negb / denom;
+    else if (_discrimi < 0)
+    {
+        sprintf(_sol3, "%.3f / %f  + i%f", negb, denom, sqrt((_discrimi * -1)));
+        // sprintf(_sol4, "%f  - i%f", negb, sqrt((_discrimi * -1)));
+    }
     else;
 }
 
@@ -385,7 +393,10 @@ void Computor::output()
         else if (_discrimi == 0)
             cout << "The Solution is:\n" << _sol1 << endl;
         else
-            cout << "No Real Solution" << endl;
+        {
+            cout << "The Solutions are: " << endl;
+            cout << _sol3 << "\n";// << _sol4 << endl;
+        }
     }
     else if (_h_power > 2)
         cout << "The polynomial degree is stricly greater than 2, I can't solve." << endl;
