@@ -6,7 +6,8 @@
 #include <iostream>
 #include <regex>
 #include <math.h>
-// #include <sstream>
+
+#define __sqrt(x) sqrt(x)
 
 using namespace std;
 

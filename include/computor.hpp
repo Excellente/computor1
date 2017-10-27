@@ -25,14 +25,18 @@ class Computor{
         int _h_power;
         string _reduced;
         float _discrimi;
-        // stringstream _ss;
         vector<float> _CBA;
         vector<Term> _exp_terms;
 
     public:
         ~Computor();
         Computor(string e);
-
+        
+        float _sqrt(float n);
+        float _pow(float b, float e);
+        float find_closestsqrt(float n);
+        float improve(float &g, float x);
+        bool isGoodEnough(float sqr, float guess);
         template <class T>
         size_t count_terms(vector<T> v);
         vector<string> strsplit(string d);

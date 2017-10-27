@@ -221,7 +221,7 @@ void Computor::quadraticForm()
 
     _discrimi = pow(_CBA[1], 2.0f) - 4 * _CBA[2] * _CBA[0];
     negb = -_CBA[1];
-    rootd = sqrt(_discrimi);
+    rootd = __sqrt(_discrimi);
     denom = 2 * _CBA[2];
     if (_discrimi > 0)
     {
@@ -291,6 +291,48 @@ vector<string> Computor::strsplit(string del)
     for (int i = 1; i < len; i++)
         terms.push_back(_exp.substr(delpos[i - 1] + 1, (delpos[i] - delpos[i - 1]) - 1));
     return (terms);
+}
+
+float Computor::_sqrt(float n)
+{
+    float sqr = 4;
+    float guess;
+
+    guess = find_closestsqrt(10);
+    for (int i = 0; 1; i++)
+    {
+        improve(guess, sqr);
+        if (isGoodEnough(sqr, guess))
+            break ;
+    }
+    return (0);
+}
+
+float Computor::_pow(float b, float e)
+{
+    float res = 1;
+
+    for (int i = 0; i < e; i++)
+        res *= b;
+    return (res);
+}
+
+float Computor::improve(float &g, float x)
+{
+    g = ((x / g) + g) / 2;
+    return (g);
+}
+
+bool Computor::isGoodEnough(float sqr, float guess)
+{
+    if (sqr - (guess * guess) < 0.001)
+        return (true);
+    return (false);
+}
+
+float Computor::find_closestsqrt(float n)
+{
+    return ((n / 2) - 2);
 }
 
 void Computor::likeTermsVerbose(vector<Term> &lt, v_iter_t t, v_iter_t bvi)
