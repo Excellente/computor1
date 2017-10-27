@@ -6,6 +6,8 @@ Computor::Computor(string exp) : _exp(exp){
     ret = strsplit("=");
     _sol1 = 0;
     _sol2 = 0;
+    _sol3[0] = '\0';
+    _sol4[0] = '\0';
     _h_power = 0;
     _reduced = "";
     _lhs = ret[0];
@@ -79,7 +81,7 @@ void Computor::stringToTerm(string _e, int &sign, int f)
 
 void Computor::getTerm(string p, string &t, int &last, int &first)
 {
-    regex rg("(\\s+)?((-|\\+)(\\s+)?)?[[:digit:]]+(\\.[[:digit:]]+)?(\\s\\*\\s)(X|x)(\\^[[:digit:]]+)(\\s+)?");
+    regex rg("(\\s+)?((-|\\+)(\\s+)?)?[[:digit:]]+(\\.[[:digit:]]+)?(\\s\\*\\s)(X|x)(\\s)?(\\^(\\s)?[[:digit:]]+)(\\s+)?");
     
     while (p[last] != '+' && p[last] != '-' && p[last] != '\0')
         last++;
@@ -230,8 +232,8 @@ void Computor::quadraticForm()
         _sol1 = negb / denom;
     else if (_discrimi < 0)
     {
-        sprintf(_sol3, "%.3f / %f  + i%f", negb, denom, sqrt((_discrimi * -1)));
-        // sprintf(_sol4, "%f  - i%f", negb, sqrt((_discrimi * -1)));
+        // sprintf(_sol3, "%.3f / %f  + i%f", negb, denom, sqrt((_discrimi * -1)) / denom);
+        // sprintf(_sol4, "%.3f / %f  - i%f", negb, denom, sqrt((_discrimi * -1)) / denom);
     }
     else;
 }
@@ -366,7 +368,14 @@ void Computor::output()
     string tmp;
     v_iter_t evi = _exp_terms.end();
     v_iter_t bvi = _exp_terms.begin();
+    float negb;
+    float rootd;
+    float denom;
 
+    _discrimi = pow(_CBA[1], 2.0f) - 4 * _CBA[2] * _CBA[0];
+    negb = -_CBA[1];
+    rootd = sqrt(_discrimi);
+    denom = 2 * _CBA[2];
     cout << "Reduced Form: ";
     for (; bvi != evi; bvi++)
     {
@@ -395,7 +404,10 @@ void Computor::output()
         else
         {
             cout << "The Solutions are: " << endl;
-            cout << _sol3 << "\n";// << _sol4 << endl;
+            sprintf(_sol3, "%.3f / %f  + i%f", negb, denom, sqrt((_discrimi * -1)) / denom);
+            cout << _sol3 << endl;
+            sprintf(_sol3, "%.3f / %f  - i%f", negb, denom, sqrt((_discrimi * -1)) / denom);
+            cout << _sol3 << endl;
         }
     }
     else if (_h_power > 2)
